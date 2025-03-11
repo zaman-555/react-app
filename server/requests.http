@@ -1,0 +1,252 @@
+
+
+
+@host = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDE2NDA1MTQsImV4cCI6MTc0MTY4MzcxNH0.zfoEl4Md55FPzBzdgyFyBR4B4evaiO2BSfZszxJLv2Y
+@email = mohammad.uzzaman.dev@gmail.com
+
+@emailUser = mohammadzamanfi@gmail.com
+@token2 = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQxNzA3NDI0LCJleHAiOjE3NDE3NTA2MjR9.nefwUXjV48lXiSsGC_8AIH-EvbUMdVfv8Q7vFzRwx4E
+@password = admin123
+### registering a user  role as admin
+POST {{host}}/users/register
+Content-Type: application/json
+
+{
+  "name": "user-zaman",
+  "email": "mohammadzamanfi@gmail.com",
+  "password": "admin123"
+  
+}
+
+
+### Login
+
+POST {{host}}/users/login
+Content-Type: application/json
+
+{
+  "email": "mohammad.uzzaman.dev@gmail.com",
+  "password": "admin123"
+}
+
+
+### ///////////////////////////////// ###
+
+### Login User
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Get User Profile (Requires Token)
+GET {{host}}/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDE3MTQyMTgsImV4cCI6MTc0MTc1NzQxOH0.i29kBzRyiv5_wxINk0FV2v6zQD2m7vHMyU4WajeiUvg
+Content-Type: application/json
+
+### Update User Profile (Requires Token)
+PUT {{host}}/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDE3MTQyMTgsImV4cCI6MTc0MTc1NzQxOH0.i29kBzRyiv5_wxINk0FV2v6zQD2m7vHMyU4WajeiUvg
+Content-Type: application/json
+
+{
+    "name": "Updated User Name"
+}
+
+### List Users (Requires Token - Admin)
+GET {{host}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Update User Role (Requires Token - Admin)
+PUT {{host}}/users/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "role": "admin"
+}
+
+### Delete User (Requires Token - Admin)
+DELETE {{host}}/users/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Create Product (Requires Token - Admin)
+POST {{host}}/products
+Authorization: Bearer {{token2}}
+Content-Type: application/json
+
+{
+  "name": "Product-13",
+  "description": "Test description",
+  "price": 32.99,
+  "image": "http://example.com/image1.jpg",
+  "stock": 145,
+  "category": "Book"
+}
+### Create Product (Requires Token - Admin)
+POST {{host}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Iphone X",
+  "description": "Test description",
+  "price": 3467,
+  "image": "http://example.com/image2.jpg",
+  "stock": 23,
+  "category": "Electronics"
+}
+
+### Create Product (Requires Token - Admin)
+POST {{host}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Product-10",
+  "description": "Test description",
+  "price": 223.49,
+  "image": "http://example.com/image3.jpg",
+  "stock": 38
+}
+
+### Create Product (Requires Token - Admin)
+POST {{host}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Product-11",
+  "description": "MacBook",
+  "price": 313.49,
+  "image": "http://example.com/image4.jpg",
+  "stock": 5,
+  "category": "Electronics"
+}
+### Update Product (Requires Token - Admin)
+PUT {{host}}/products/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Product Name",
+  "price": 39.99
+}
+
+### Update Product (Requires Token - Admin)
+PUT {{host}}/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Product 2",
+  "price": 99.99
+}
+
+### Delete Product (Requires Token - Admin)
+DELETE {{host}}/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### List Products
+GET {{host}}/products
+Content-Type: application/json
+
+### List Orders (Requires Token)
+GET http://localhost:5000/api/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Update Order Status (Requires Token - Admin)
+PUT http://localhost:5000/api/orders/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### Create Order (Example - Would need more details to be fully functional)
+# POST http://localhost:5000/api/orders
+# Authorization: Bearer {{token}}
+# Content-Type: application/json
+
+# {
+#   "items": [
+#     {
+#       "productId": 1,
+#       "quantity": 2
+#     },
+#     {
+#       "productId": 2,
+#       "quantity": 1
+#     }
+#   ]
+# }
+
+### Get Payment Info (Requires Token)
+GET {{host}}/payment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+
+### Search products by name, description, price range, or category
+GET http://localhost:3000/api/products/search?query=Product&minPrice=100&maxPrice=500&category=Book&page=1&limit=10
+Content-Type: application/json
+
+### Search products by name, description, price range, or category
+GET http://localhost:5000/api/products/search?query=smartphone&page=1&limit=5
+Content-Type: application/json
+
+### Search products by category
+GET http://localhost:5000/api/products/search?category=Book&page=1&limit=5
+Content-Type: application/json
+
+### Search products by price range
+GET http://localhost:5000/api/products/search?minPrice=200&maxPrice=400&page=1&limit=5
+Content-Type: application/json
+
+### Search products by maximum price
+GET http://localhost:5000/api/products/search?maxPrice=100&page=1&limit=5
+Content-Type: application/json
+
+
+
+### Upload Profile Picture
+PUT http://localhost:5000/api/users/profile/picture
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="profilePicture"; filename="your_image.jpg"
+Content-Type: image/jpeg
+
+< ./c/Users/mohammad/Desktop/images.jpg
+
+--WebAppBoundary--
+
+
+
+
+### Create Order (from Cart)
+POST http://localhost:5000/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Get Order History
+GET http://localhost:5000/api/orders
+Authorization: Bearer {{token}}
+
+### Update Order Status (Admin Only)
+PUT http://localhost:5000/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "Shipped"
+}
