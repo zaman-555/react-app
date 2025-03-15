@@ -27,10 +27,10 @@ const Order = sequelize.define('Order', {
     },
     comment: 'The total amount of the order, calculated as the sum of all order items.',
   },
-  status: {
-    type: DataTypes.ENUM('pending', 'completed', 'cancelled'),
+  status:  {
+    type: DataTypes.ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled'),
+    allowNull: false,
     defaultValue: 'pending',
-    comment: 'The current status of the order.',
   },
   createdAt: {
     type: DataTypes.DATE,

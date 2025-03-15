@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary'); // Adjust path as needed
 const multer = require('multer');
+const logger = require('../utils/logger');
 
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
@@ -18,7 +19,7 @@ exports.getProfile = async (req, res) => {
 
     res.json({ user });
   } catch (err) {
-    console.error('Error fetching user profile:', err);
+    logger.error('Error fetching user profile:', err);
     res.status(500).json({ error: 'An error occurred while fetching the profile.' });
   }
 };
@@ -49,7 +50,7 @@ exports.updateProfile = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error updating profile:', err);
+    logger.error('Error updating profile:', err);
     res.status(500).json({ error: 'An error occurred while updating the profile.' });
   }
 };
@@ -82,7 +83,7 @@ exports.updateProfilePicture = [
         profilePicture: result.secure_url,
       });
     } catch (err) {
-      console.error('Error updating profile picture:', err);
+      logger.error('Error updating profile picture:', err);
       res.status(500).json({ error: 'An error occurred while updating the profile picture.' });
     }
   },

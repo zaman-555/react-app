@@ -1,8 +1,8 @@
 const express = require('express');
 const productController = require('../controllers/productController');
-const { validateProductId, validateProductInput } = require('../middleware/validationMiddleware');
-const auth = require('../middleware/auth'); // Import auth middleware
-const admin = require('../middleware/admin'); // Import admin middleware
+const { validateProductId, validateProductInput } = require('../middlewares/validationMiddleware');
+const auth = require('../middlewares/auth'); // Import auth middleware
+const admin = require('../middlewares/admin'); // Import admin middleware
 
 const router = express.Router();
 

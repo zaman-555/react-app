@@ -56,6 +56,9 @@ const CartItem = sequelize.define('CartItem', {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1,
+    validate: {
+      min: 1, // Ensure quantity is at least 1
+    },
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -71,5 +74,22 @@ const CartItem = sequelize.define('CartItem', {
 Cart.hasMany(CartItem, { foreignKey: 'cartId' });
 CartItem.belongsTo(Cart, { foreignKey: 'cartId' });
 CartItem.belongsTo(Product, { foreignKey: 'productId' });
+
+// Hooks for CartItem
+CartItem.beforeCreate(async (cartItem) => {
+  // Ensure the product exists
+  const product = await Product.findByPk(cartItem.productId);
+  if (!product) {
+    throw new Error('Product not found.');
+  }
+});
+
+CartItem.beforeUpdate(async (cartItem) => {
+  // Ensure the product exists
+  const product = await Product.findByPk(cartItem.productId);
+  if (!product) {
+    throw new Error('Product not found.');
+  }
+});
 
 module.exports = { Cart, CartItem };

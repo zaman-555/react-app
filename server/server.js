@@ -1,9 +1,12 @@
 const express = require('express');
 const sequelize = require('./config/db');
 const dotenv = require('dotenv');
+const logger = require('./utils/logger');
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const path = require("path");
+
+
 
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -14,9 +17,9 @@ const userRoutes = require('./routes/userRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
 // Import middleware
-const auth = require('./middleware/auth');
-const admin = require('./middleware/admin');
-const errorHandler = require('./middleware/error');
+const auth = require('./middlewares/auth');
+const admin = require('./middlewares/admin');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
 app.use(express.json());
@@ -55,18 +58,18 @@ const upload = multer({ storage });
 sequelize
   .sync({force: false }) // Use `force: true` only in development
   .then(() => {
-    console.log('Database synced successfully.');
+    logger.info('Database synced successfully.');
   })
   .catch((err) => {
-    console.error('Error syncing database:', err);
+    logger.error('Error syncing database:', err);
   });
 
   sequelize.query("SHOW TABLES", { type: sequelize.QueryTypes.SHOWTABLES })
     .then((tables) => {
-        console.log('Tables in the database:', tables);
+      logger.info('Tables in the database:', tables);
     })
     .catch((err) => {
-        console.error('Error fetching tables:', err);
+      logger.error('Error fetching tables:', err);
     });
 
 
@@ -87,5 +90,5 @@ app.use(errorHandler);
 // Start server
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });

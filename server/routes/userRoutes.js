@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middlewares/auth');
 
 // Public routes (no authentication required)
 router.post('/register', authController.register);

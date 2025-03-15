@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken'); // Import the jsonwebtoken module
 const  User   = require('../models/User'); 
 const { generateToken } = require('../config/auth');
 const { sendEmail } = require('../config/mailer');
+const logger = require('../utils/logger');
 require('dotenv').config();
 
 
@@ -11,7 +12,7 @@ exports.register = async (req, res) => {
   const { name, email, password, profilePicture } = req.body; // Add profilePicture
 
   try {
-    console.log('User model:', User); // Debugging: Check if User is defined
+    logger.info('User model:', User); // Debugging: Check if User is defined
 
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
@@ -29,7 +30,7 @@ exports.register = async (req, res) => {
       password: hashedPassword,
       profilePicture, // Add profilePicture
     });
-    console.log(user);
+    logger.info(user);
 
     // Generate a verification token
     const verificationToken = generateToken(user);
@@ -54,7 +55,7 @@ exports.register = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error during registration:', err);
+    logger.error('Error during registration:', err);
     res.status(500).json({ error: 'An error occurred during registration.' });
   }
 };
@@ -100,7 +101,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error during login:', err);
+    logger.error('Error during login:', err);
     res.status(500).json({ error: 'An error occurred during login.' });
   }
 };
@@ -119,8 +120,8 @@ exports.verifyEmail = async (req, res) => {
       return res.status(404).json({ error: 'User not found.' });
     }
 
-    console.log('Token:', token);
-    console.log('Decoded:', decoded);
+    logger.log('Token:', token);
+    logger.log('Decoded:', decoded);
 
     // Mark the user as verified
     user.isVerified = true;
@@ -128,7 +129,7 @@ exports.verifyEmail = async (req, res) => {
 
     res.json({ message: 'Email verified successfully.' });
   } catch (error) {
-    console.error('Error verifying email:', error);
+    logger.error('Error verifying email:', error);
     res.status(400).json({ error: 'Invalid or expired token.' });
   }
 };
@@ -159,7 +160,7 @@ exports.requestPasswordReset = async (req, res) => {
 
     res.json({ message: 'Password reset email sent successfully.' });
   } catch (error) {
-    console.error('Error requesting password reset:', error);
+    logger.error('Error requesting password reset:', error);
     res.status(500).json({ error: 'An error occurred while requesting a password reset.' });
   }
 };
@@ -193,7 +194,7 @@ exports.resetPassword = async (req, res) => {
 
     res.json({ message: 'Password reset successfully.' });
   } catch (error) {
-    console.error('Error resetting password:', error);
+    logger.error('Error resetting password:', error);
     res.status(400).json({ error: 'Invalid or expired token.' });
   }
 };

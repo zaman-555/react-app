@@ -1,5 +1,6 @@
 const { sendEmail } = require('../config/mailer');
 const { orderConfirmationTemplate } = require('../utils/emailTemplates');
+const logger = require('../utils/logger');
 
 // Function to send order confirmation emails
 const sendOrderConfirmationEmail = async (userEmail, orderDetails) => {
@@ -9,9 +10,9 @@ const sendOrderConfirmationEmail = async (userEmail, orderDetails) => {
 
   try {
     await sendEmail(userEmail, subject, text, html);
-    console.log('Order confirmation email sent successfully.');
+    logger.info('Order confirmation email sent successfully.');
   } catch (error) {
-    console.error('Failed to send order confirmation email:', error);
+    logger.error('Failed to send order confirmation email:', error);
     throw error;
   }
 };
@@ -24,9 +25,9 @@ const sendPasswordResetEmail = async (userEmail, resetLink) => {
   
     try {
       await sendEmail(userEmail, subject, text, html);
-      console.log('Password reset email sent successfully.');
+      logger.info('Password reset email sent successfully.');
     } catch (error) {
-      console.error('Failed to send password reset email:', error);
+      logger.error('Failed to send password reset email:', error);
       throw error;
     }
   };

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const authMiddleware = require('../middleware/auth');
-const adminMiddleware = require('../middleware/admin');
+const authMiddleware = require('../middlewares/auth');
+const adminMiddleware = require('../middlewares/admin');
 
 // Product Management
 router.post('/products', authMiddleware, adminMiddleware, adminController.createProduct);
@@ -12,6 +12,7 @@ router.get('/products', authMiddleware, adminMiddleware, adminController.listPro
 
 // User Management
 router.get('/users', authMiddleware, adminMiddleware, adminController.listUsers);
+router.put('/users/:userId', authMiddleware, adminMiddleware, adminController.updateUser);
 router.put('/users/:userId/role', authMiddleware, adminMiddleware, adminController.updateUserRole);
 router.delete('/users/:userId', authMiddleware, adminMiddleware, adminController.deleteUser);
 
