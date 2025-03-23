@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
-const logger = require('../utils/logger');
 const { DatabaseError } = require('../middlewares/errorHandler'); // Import custom error class
+const logger = require('../utils/logger');
 
 require('dotenv').config();
 

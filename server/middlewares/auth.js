@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+require('dotenv').config();
 
 const auth = async (req, res, next) => {
   try {
@@ -11,12 +12,12 @@ const auth = async (req, res, next) => {
       throw new Error('Authorization token is required.');
     }
 
-    console.log('Token received:', token); // Log the received token
+    //console.log('Token received:', token); // Log the received token
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log('Decoded token payload:', decoded); // Log the decoded payload
+    //console.log('Decoded token payload:', decoded); // Log the decoded payload
 
     // Find the user associated with the token
     const user = await User.findByPk(decoded.id); // Use findByPk for Sequelize
@@ -29,6 +30,8 @@ const auth = async (req, res, next) => {
     // Attach the user and token to the request object
     req.user = user;
     req.token = token;
+
+    console.log('User attached to request:', req.user); // Log the attached user
 
     next(); // Proceed to the next middleware or route handler
   } catch (error) {

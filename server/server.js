@@ -1,10 +1,14 @@
 const express = require('express');
 const sequelize = require('./config/db');
-const dotenv = require('dotenv');
 const logger = require('./utils/logger');
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const path = require("path");
+const session = require('express-session');
+const passport = require('./config/passport');
+const cors = require('cors');
+require('dotenv').config();
+
 
 
 
@@ -16,22 +20,54 @@ const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
+
 // Import middleware
 const auth = require('./middlewares/auth');
 const admin = require('./middlewares/admin');
 const { errorHandler } = require('./middlewares/errorHandler');
 
+
+
+
+
+
 const app = express();
+
+app.use(session({
+  secret: process.env.SECRET_SESSION, // Replace with a strong secret
+  resave: false,
+  saveUninitialized: false
+})); 
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from the frontend
+  credentials: true, // Allow cookies and credentials
+}));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Configure express-session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Use a strong secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true if using HTTPS
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
     next();
 });
 
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
 
+// Set the views directory
+app.set('views', path.join(__dirname, 'views'));
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -77,12 +113,13 @@ sequelize
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', auth, cartRoutes); // Protect cart routes with auth middleware
-app.use('/api/orders', auth, orderRoutes); // Protect order routes with auth middleware
+//app.use('/api/orders', auth, orderRoutes); // Protect order routes with auth middleware
 app.use('/api/admin', auth, admin, adminRoutes); // Protect admin routes with auth and admin middleware
 app.use('/api/users', userRoutes); // Protect user routes with auth middleware
-app.use('/api/payment', auth, paymentRoutes); // Protect payment routes with auth middleware
+//app.use('/api/payment',  paymentRoutes); // Protect payment routes with auth middleware
 
-
+app.use('/api/orders',  orderRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware (must be the last middleware)
 app.use(errorHandler);

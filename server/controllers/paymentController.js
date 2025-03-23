@@ -1,13 +1,62 @@
-const { processPayment } = require('../services/paymentService');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const logger = require('../utils/logger');
 
-// Process a payment
-exports.processPayment = async (req, res) => {
-  const { amount, currency, source, description } = req.body;
-
+// Process payment using Stripe
+const processPayment = async (req, res, next) => {
   try {
-    const paymentResult = await processPayment(amount, currency, source, description);
-    res.json(paymentResult);
+    logger.info('Request body:', req.body); // Log the request body
+
+    const { amount, paymentMethod, cardDetails } = req.body;
+
+    // Validate required fields
+    if (!amount || !paymentMethod || !cardDetails) {
+      return res.status(400).json({
+        error: 'Missing required fields: amount, paymentMethod, or cardDetails.',
+      });
+    }
+
+    // Validate card details
+    if (
+      !cardDetails.number ||
+      !cardDetails.expMonth ||
+      !cardDetails.expYear ||
+      !cardDetails.cvc
+    ) {
+      return res.status(400).json({
+        error: 'Invalid card details. Please provide number, expMonth, expYear, and cvc.',
+      });
+    }
+
+    // Process payment
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: 'usd',
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never', // Disable redirect-based payment methods
+      },
+      confirm: true,
+      payment_method_data: {
+        type: 'card',
+        card: {
+          number: cardDetails.number,
+          exp_month: cardDetails.expMonth,
+          exp_year: cardDetails.expYear,
+          cvc: cardDetails.cvc,
+        },
+      },
+    });
+
+    res.status(200).json({
+      message: 'Payment processed successfully.',
+      paymentIntent,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error processing payment:', err); // Log the error
+    res.status(500).json({ error: 'Payment processing failed. Please try again later.' });
   }
+};
+
+module.exports = {
+  processPayment,
 };

@@ -1,0 +1,73 @@
+<!-- views/orderConfirmation.ejs -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .order-details {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .product-list {
+            margin-top: 20px;
+        }
+
+        .product-list li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Thank you for your order, <%= order.user.name %>!</h1>
+    <p>Your order has been successfully processed.</p>
+    <div class="order-details">
+        <h2>Order Details</h2>
+        <ul>
+            <li><strong>Order ID:</strong> <%= order.id %></li>
+            <li><strong>Customer ID:</strong> <%= order.user.id %></li>
+            <li><strong>Customer Name:</strong> <%= order.user.name %></li>
+            <li><strong>Customer Email:</strong> <%= order.user.email %></li>
+            <li><strong>Total Amount:</strong> $<%= order.totalAmount %></li>
+            <li><strong>Status:</strong> <%= order.status %></li>
+        </ul>
+    </div>
+
+    <div class="product-list">
+        <h3>Products Ordered</h3>
+        <ul>
+            <% order.items.forEach(item => { %>
+                <li>
+                    <strong>Product:</strong> <%= item.Product.name %> <br>
+                    <strong>Quantity:</strong> <%= item.quantity %> <br>
+                    <strong>Price:</strong> $<%= item.price %>
+                </li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <p>We will notify you once your order is shipped.</p>
+</body>
+
+</html>

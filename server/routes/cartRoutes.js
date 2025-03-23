@@ -1,76 +1,64 @@
 const express = require('express');
-const router = express.Router();
-const { body, param, query, validationResult } = require('express-validator');
-const orderController = require('../controllers/orderController');
+const cartController = require('../controllers/cartController');
 const authMiddleware = require('../middlewares/auth');
-const adminMiddleware = require('../middlewares/admin');
+const { body, param, validationResult } = require('express-validator');
 
-// Create an order (with checkout functionality)
+const router = express.Router();
+
+// Protected routes (require authentication)
+router.use(authMiddleware);
+
+// Add to cart
 router.post(
-  '/',
-  authMiddleware,
+  '/add-to-cart',
   [
-    body('products').isArray().withMessage('Products must be an array.'),
-    body('products.*.productId').isInt().withMessage('Invalid product ID.'),
-    body('products.*.quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1.'),
+    body('productId').isInt({ min: 1 }).withMessage('Product ID must be a positive integer.'),
+    body('quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1.'),
   ],
-  orderController.createOrder
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  cartController.addToCart
 );
 
-// Alternatively, you can use a dedicated checkout route
- router.post(
-   '/checkout',
-  authMiddleware,
-   [
-    body('products').isArray().withMessage('Products must be an array.'),
-    body('products.*.productId').isInt().withMessage('Invalid product ID.'),
-     body('products.*.quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1.'),
-   ],
-   orderController.createOrder
- );
-
-// Get order history
-router.get(
-  '/history',
-  authMiddleware,
-  [
-    query('page').optional().isInt({ min: 1 }).withMessage('Invalid page number.'),
-    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Invalid limit.'),
-  ],
-  orderController.getOrderHistory
-);
-
-// Get order details by ID
-router.get(
-  '/:orderId',
-  authMiddleware,
-  [
-    param('orderId').isInt().withMessage('Invalid order ID.'),
-  ],
-  orderController.getOrderById
-);
-
-// Update order status (Admin only)
+// Update cart item quantity
 router.put(
-  '/:orderId/status',
-  authMiddleware,
-  adminMiddleware,
+  '/:productId',
   [
-    param('orderId').isInt().withMessage('Invalid order ID.'),
-    body('status').isIn(['pending', 'processing', 'shipped', 'delivered', 'cancelled']).withMessage('Invalid status.'),
+    param('productId').isInt({ min: 1 }).withMessage('Product ID must be a positive integer.'),
+    body('quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1.'),
   ],
-  orderController.updateOrderStatus
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  cartController.updateCartItem
 );
 
-// Delete an order (Admin only) - Soft delete
+// Remove from cart
 router.delete(
-  '/:orderId',
-  authMiddleware,
-  adminMiddleware,
+  '/:productId',
   [
-    param('orderId').isInt().withMessage('Invalid order ID.'),
+    param('productId').isInt({ min: 1 }).withMessage('Product ID must be a positive integer.'),
   ],
-  orderController.deleteOrder
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  cartController.removeFromCart
 );
+
+// Get cart
+router.get('/', cartController.getCart);
 
 module.exports = router;

@@ -1,25 +1,34 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Login from "./pages/Login"; 
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import RegisterForm from './components/RegisterForm';
+import LoginForm from './components/LoginForm';
+import EmailVerificationPage from './components/EmailVerificationPage';
+import RequestPasswordResetForm from './components/RequestPasswordResetForm';
+import ResetPasswordForm from './components/ResetPasswordForm';
+import ProtectedRoute from './components/ProtectedRoute';
+import HomePage from './components/HomePage';
+import Dashboard from './components/Dashboard';
+import GoogleAuthCallbackPage from './components/GoogleAuthCallbackPage'; 
 
-
-
-function App() {
+const App = () => {
   return (
     <Router>
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact/>} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </main>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<RegisterForm />} /> {/* Register Route */}
+        <Route path="/login" element={<LoginForm />} /> {/* Login Route */}
+        <Route path="/verify/:token" element={<EmailVerificationPage />} />
+        <Route path="/request-password-reset" element={<RequestPasswordResetForm />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordForm />} />
+        <Route path="/auth/google/callback" element={<GoogleAuthCallbackPage />} />
+        <Route element={<ProtectedRoute />}> 
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
     </Router>
   );
-}
+};
 
 export default App;

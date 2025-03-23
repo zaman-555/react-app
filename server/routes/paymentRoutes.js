@@ -4,7 +4,10 @@ const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
-// Process a payment
-router.post('/process', authMiddleware, paymentController.processPayment);
+// Protected routes (require authentication)
+router.use(authMiddleware);
+
+// Process payment
+router.post('/process-payment', paymentController.processPayment);
 
 module.exports = router;

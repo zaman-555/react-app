@@ -1,4 +1,6 @@
-const logger = require('../utils/logger'); // Assuming you have a logger utility
+const logger = require('../utils/logger'); // Import the logger
+
+
 
 // Custom error classes
 class ValidationError extends Error {

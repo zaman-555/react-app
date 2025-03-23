@@ -18,7 +18,7 @@ const User = sequelize.define('User', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true, // Allow null for Google OAuth users
   },
   role: {
     type: DataTypes.ENUM('user', 'admin'),
@@ -29,7 +29,8 @@ const User = sequelize.define('User', {
     defaultValue: false,
   },
   verificationToken: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255), // VARCHAR(255) in MySQL
+    allowNull: true,
   },
   resetToken: {
     type: DataTypes.STRING,
@@ -42,6 +43,47 @@ const User = sequelize.define('User', {
   profilePicture: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  dateOfBirth: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.ENUM('male', 'female', 'other'),
+    allowNull: true,
+  },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  state: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  country: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  postalCode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  googleId: {
+    type: DataTypes.STRING,
+    allowNull: true, // Allow null for email/password users
+    unique: true,
+  },
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
   createdAt: {
     type: DataTypes.DATE,

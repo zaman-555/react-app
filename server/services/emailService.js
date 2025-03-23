@@ -1,5 +1,4 @@
 const { sendEmail } = require('../config/mailer');
-const { orderConfirmationTemplate } = require('../utils/emailTemplates');
 const logger = require('../utils/logger');
 
 // Function to send order confirmation emails

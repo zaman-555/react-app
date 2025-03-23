@@ -1,37 +1,70 @@
 const nodemailer = require('nodemailer');
-require('dotenv').config();
+const ejs = require('ejs');
+const path = require('path');
+require('dotenv').config(); // Load environment variables
 
-// Check if environment variables are set
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-  throw new Error('EMAIL_USER and EMAIL_PASSWORD must be set in the environment variables.');
-}
-
-// Create a transporter for sending emails
+// Create a transporter object using SMTP
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'gmail', // Use your email service (e.g., Gmail, Outlook)
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.EMAIL_USER, // Your email address
+    pass: process.env.EMAIL_PASSWORD, // Your email password or app-specific password
   },
 });
 
-// Generic function to send emails
-const sendEmail = async (to, subject, text, html = '') => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject,
-    text, // Plain text body
-    html, // HTML body (optional)
-  };
-
+// Function to send an email
+const sendEmail = async (email, token, name) => {
   try {
+    // Construct the verification URL
+    const verificationUrl = `http://localhost:5000/api/auth/verify/${token}`;
+
+    // Render the EJS template
+    const templatePath = path.join(__dirname, '../views/verifyEmail.ejs');
+    const html = await ejs.renderFile(templatePath, { name, link: verificationUrl });
+
+    // Define the email options
+    const mailOptions = {
+      from: process.env.EMAIL_USER, // Sender address
+      to: email, // Recipient address
+      subject: 'Verify Your Email', // Email subject
+      html, // Email content (HTML)
+    };
+
+    // Send the email
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully to:', to);
+    console.log(`Verification email sent to ${email}`);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending verification email:', error);
+    throw error; // Re-throw the error for the caller to handle
+  }
+};
+
+
+const sendPasswordResetEmail = async (email, resetLink) => {
+  try {
+    await sendEmail(
+      email, // Recipient email
+      'Password Reset Request', // Email subject
+      'passwordResetEmail', // EJS template name (without .ejs)
+      {
+        resetLink,
+      }
+    );
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
     throw error;
   }
 };
 
-module.exports = { sendEmail };
+// controllers/authController.js
+exports.getResetPasswordForm = (req, res) => {
+  const { token } = req.query; // Extract the token from the query parameters
+
+  if (!token) {
+    return res.status(400).json({ error: 'Reset token is missing.' });
+  }
+
+  // Render the password reset form (e.g., using EJS)
+  res.render('resetPasswordForm', { token });
+};
+module.exports = { sendEmail, sendPasswordResetEmail }; 
